@@ -1,22 +1,12 @@
 package br.com.alura.forum.controller.form;
 
-import java.lang.reflect.Method;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 
-import javax.validation.ValidationException;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
-import org.springframework.core.MethodParameter;
-import org.springframework.validation.BeanPropertyBindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.util.UriComponentsBuilder;
-
-import br.com.alura.forum.controller.TopicosController;
 import br.com.alura.forum.controller.repository.CursoRepository;
-import br.com.alura.forum.error.ElementNotInTheDatabaseException;
+import br.com.alura.forum.exception.ElementNotInTheDatabaseException;
 import br.com.alura.forum.model.Curso;
 import br.com.alura.forum.model.Topico;
 

@@ -1,4 +1,4 @@
-package br.com.alura.forum.error;
+package br.com.alura.forum.exception;
 
 import org.springframework.validation.FieldError;
 
