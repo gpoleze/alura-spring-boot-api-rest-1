@@ -1,11 +1,10 @@
 package br.com.alura.forum.dto;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toList;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-import br.com.alura.forum.controller.form.TopicoForm;
 import br.com.alura.forum.model.Topico;
 
 public class TopicoDto {

@@ -2,10 +2,8 @@ package br.com.alura.forum.controller;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 
 import javax.validation.Valid;
-import javax.validation.ValidationException;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,10 +18,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.alura.forum.controller.form.TopicoForm;
 import br.com.alura.forum.controller.repository.CursoRepository;
+import br.com.alura.forum.dto.TopicoDetalhadoDto;
 import br.com.alura.forum.dto.TopicoDto;
 import br.com.alura.forum.model.Topico;
 import br.com.alura.forum.repository.TopicoRepository;
@@ -55,13 +55,12 @@ public class TopicosController {
     }
 
     @GetMapping("/{id}")
-    public TopicoDto carregaTopico(@PathVariable Long id) {
-        System.out.println(id);
-        Optional<Topico> topico = topicoRepo.findById(id);
-        if (topico.isPresent())
-            return new TopicoDto(topico.get());
+    public TopicoDetalhadoDto carregaTopico(@PathVariable Long id) {
+        Topico topico = topicoRepo
+                .findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-        return null;
+        return new TopicoDetalhadoDto(topico);
     }
 
     @PostMapping
