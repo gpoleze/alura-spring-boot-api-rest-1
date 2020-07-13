@@ -1,11 +1,11 @@
 package br.com.alura.forum.service;
 
+import java.util.Optional;
+
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import br.com.alura.forum.controller.form.AtualizaTopicoForm;
 import br.com.alura.forum.controller.form.TopicoForm;
@@ -30,25 +30,28 @@ public class TopicoService {
 
 
     @Transactional
-    public TopicoDto atualiza(Long id, AtualizaTopicoForm form) {
-        final Topico topico = getTopico(id);
+    public Optional<TopicoDto> atualiza(Long id, AtualizaTopicoForm form) {
+        final Optional<Topico> topicoOptional = topicoRepository.findById(id);
+
+        if (!topicoOptional.isPresent())
+            return Optional.empty();
+
+
+        Topico topico = topicoOptional.get();
 
         topico.setTitulo(form.getTitulo());
         topico.setMensagem(form.getMensagem());
 
-        return new TopicoDto(topico);
-
-    }
-
-    private Topico getTopico(Long id) {
-        return topicoRepository
-                .findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        return Optional.of(new TopicoDto(topico));
     }
 
     @Transactional
-    public void remove(Long id) {
+    public Optional<Boolean> remove(Long id) {
+        if (!topicoRepository.findById(id).isPresent())
+            return Optional.empty();
+
         topicoRepository.deleteById(id);
+        return Optional.of(true);
     }
 
     @Transactional

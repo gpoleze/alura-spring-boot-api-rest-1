@@ -1,6 +1,7 @@
 package br.com.alura.forum.controller;
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -9,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.alura.forum.controller.form.AtualizaTopicoForm;
@@ -51,20 +50,17 @@ public class TopicosController {
     }
 
     @GetMapping(params = "nomeCurso")
-    public List<TopicoDto> lista(@RequestParam(value = "nomeCurso") String nomeCurso) {
-        System.out.println(nomeCurso);
-        List<Topico> topicos = topicoRepo.findByCurso_Nome(nomeCurso);
-
-        return TopicoDto.converteLista(topicos);
+    public List<TopicoDto> lista(@RequestParam String nomeCurso) {
+        return topicoRepo.findByCurso_Nome(nomeCurso)
+                .map(TopicoDto::converteLista)
+                .orElseGet(Collections::emptyList);
     }
 
     @GetMapping("/{id}")
-    public TopicoDetalhadoDto carregaTopico(@PathVariable Long id) {
-        Topico topico = topicoRepo
-                .findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-
-        return new TopicoDetalhadoDto(topico);
+    public ResponseEntity<TopicoDetalhadoDto> carregaTopico(@PathVariable Long id) {
+        return topicoRepo.findById(id)
+                .map(topico -> ResponseEntity.ok(new TopicoDetalhadoDto(topico)))
+                .orElseGet(ResponseEntity.notFound()::build);
     }
 
     @PostMapping
@@ -76,14 +72,18 @@ public class TopicosController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TopicoDto> atualiza(@PathVariable Long id, @Valid @RequestBody AtualizaTopicoForm form){
-        final TopicoDto topicoSalvo = topicoService.atualiza(id, form);
-        return ResponseEntity.ok(topicoSalvo);
+    public ResponseEntity<TopicoDto> atualiza(@PathVariable Long id, @Valid @RequestBody AtualizaTopicoForm form) {
+        return topicoService
+                .atualiza(id, form)
+                .map(ResponseEntity::ok)
+                .orElseGet(ResponseEntity.notFound()::build);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> remove(@PathVariable Long id) {
-        topicoService.remove(id);
-        return ResponseEntity.ok().build();
+        return topicoService
+                .remove(id)
+                .map(teveSucesso -> ResponseEntity.ok().build())
+                .orElseGet(ResponseEntity.notFound()::build);
     }
 }
