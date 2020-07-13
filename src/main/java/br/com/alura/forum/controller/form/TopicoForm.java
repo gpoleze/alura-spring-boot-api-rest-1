@@ -56,11 +56,7 @@ public class TopicoForm {
         return Objects.hash(titulo, mensagem, nomeCurso);
     }
 
-    public Topico converte(CursoRepository repository) {
-        final Curso curso = repository
-                .findByNome(nomeCurso)
-                .orElseThrow(() -> new ElementNotInTheDatabaseException("curso", "nomeCurso"));
-
+    public Topico converte(Curso curso) {
         return new Topico(titulo, mensagem, curso);
     }
 }

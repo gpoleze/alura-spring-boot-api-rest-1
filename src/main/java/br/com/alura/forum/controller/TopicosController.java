@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,7 +25,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.alura.forum.controller.form.AtualizaTopicoForm;
 import br.com.alura.forum.controller.form.TopicoForm;
-import br.com.alura.forum.controller.repository.CursoRepository;
 import br.com.alura.forum.dto.TopicoDetalhadoDto;
 import br.com.alura.forum.dto.TopicoDto;
 import br.com.alura.forum.model.Topico;
@@ -37,13 +37,11 @@ public class TopicosController {
 
     private final TopicoService topicoService;
     private final TopicoRepository topicoRepo;
-    private final CursoRepository cursoRepo;
 
     @Autowired
-    public TopicosController(TopicoService topicoService, TopicoRepository topicoRepo, CursoRepository cursoRepo) {
+    public TopicosController(TopicoService topicoService, TopicoRepository topicoRepo) {
         this.topicoService = topicoService;
         this.topicoRepo = topicoRepo;
-        this.cursoRepo = cursoRepo;
     }
 
     @GetMapping
@@ -71,10 +69,10 @@ public class TopicosController {
 
     @PostMapping
     public ResponseEntity<TopicoDto> cadastrar(@Valid @RequestBody TopicoForm form, UriComponentsBuilder uriBuilder) {
-        final Topico topico = form.converte(cursoRepo);
-        final Topico topicoSalvo = topicoRepo.save(topico);
-        final URI uri = uriBuilder.path("/topicos/{id}").buildAndExpand(topicoSalvo.getId()).toUri();
-        return ResponseEntity.created(uri).body(new TopicoDto(topico));
+        TopicoDto topico = topicoService.salva(form);
+
+        final URI uri = uriBuilder.path("/topicos/{id}").buildAndExpand(topico.getId()).toUri();
+        return ResponseEntity.created(uri).body(topico);
     }
 
     @PutMapping("/{id}")
@@ -83,4 +81,9 @@ public class TopicosController {
         return ResponseEntity.ok(topicoSalvo);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> remove(@PathVariable Long id) {
+        topicoService.remove(id);
+        return ResponseEntity.ok().build();
+    }
 }
