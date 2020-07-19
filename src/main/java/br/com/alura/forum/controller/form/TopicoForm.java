@@ -5,8 +5,6 @@ import java.util.Objects;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
-import br.com.alura.forum.controller.repository.CursoRepository;
-import br.com.alura.forum.exception.ElementNotInTheDatabaseException;
 import br.com.alura.forum.model.Curso;
 import br.com.alura.forum.model.Topico;
 

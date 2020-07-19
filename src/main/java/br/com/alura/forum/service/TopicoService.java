@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import br.com.alura.forum.controller.form.AtualizaTopicoForm;
 import br.com.alura.forum.controller.form.TopicoForm;
-import br.com.alura.forum.controller.repository.CursoRepository;
+import br.com.alura.forum.repository.CursoRepository;
 import br.com.alura.forum.dto.TopicoDto;
 import br.com.alura.forum.exception.ElementNotInTheDatabaseException;
 import br.com.alura.forum.model.Curso;
